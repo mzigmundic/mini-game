@@ -1,0 +1,74 @@
+package data;
+
+import static helpers.Grafika.QuickLoad;
+import static helpers.Grafika.DrawQuadTex;
+import org.lwjgl.input.Mouse;
+import org.newdawn.slick.opengl.Texture;
+
+import UI.KoristnickoSucelje;
+import UI.KoristnickoSucelje.Menu;
+import helpers.MenadzerStanja;
+
+public class Igra {
+	
+	private PlociceMap grid;
+	private Igrac player;
+	private ValSetup waveManager;
+	private KoristnickoSucelje gameUI;
+	private Menu towerPickerMenu;
+	private Texture menuBackground;
+	private Neprijatelj[] enemyTypes;
+	
+	public Igra(PlociceMap grid) {
+		this.grid = grid;
+		enemyTypes = new Neprijatelj[2];
+		enemyTypes[0] = new NeprijateljA(2, 0, grid);
+		enemyTypes[1] = new NeprijateljB(2, 0, grid);
+		waveManager = new ValSetup(enemyTypes, 2, 4);
+		player = new Igrac(grid, waveManager);
+		player.setup();
+		this.menuBackground = QuickLoad("menu_background2");
+		setupUI();
+	}
+	
+	private void setupUI() {
+		gameUI = new KoristnickoSucelje();
+		gameUI.createMenu("TowerPicker", 1088, 100, 192, 960, 2, 0);
+		towerPickerMenu = gameUI.getMenu("TowerPicker");
+		towerPickerMenu.brziDodajGumb("CannonOrange", "cannonGunOrange");
+		towerPickerMenu.brziDodajGumb("CannonIce", "cannonGunIce");
+		towerPickerMenu.brziDodajGumb("CannonUltra", "cannonGunUltra");
+	}
+	
+	private void updateUI() {
+		gameUI.draw();
+		gameUI.drawString(1140, 470, "Wave: " + waveManager.getWaveNumber());
+		gameUI.drawString(1140, 570, "Lives: " + Igrac.Lives);
+		gameUI.drawString(1140, 640, "Money: " + Igrac.Cash);
+		gameUI.drawString(0, 0, MenadzerStanja.frejmovaUProslojSekundi + " fps");
+		
+		if (Mouse.next()) {
+			boolean mouseClicked = Mouse.isButtonDown(0);
+			if (mouseClicked) {
+				if (towerPickerMenu.isButtonClicked("CannonOrange")) {
+					player.pickTower(new TopGunNarancasti(TipTopa.TopNarancasti, grid.dohvatiPlocicu(0, 0), waveManager.getCurrentWave().getEnemyList()));
+				}
+				if (towerPickerMenu.isButtonClicked("CannonIce")) {
+					player.pickTower(new TopGunLed(TipTopa.TopLed, grid.dohvatiPlocicu(0, 0), waveManager.getCurrentWave().getEnemyList()));
+				}
+				if (towerPickerMenu.isButtonClicked("CannonUltra")) {
+					player.pickTower(new TopGunUltra(TipTopa.CannonUltra, grid.dohvatiPlocicu(0, 0), waveManager.getCurrentWave().getEnemyList()));
+				}
+			}
+		}
+	}
+	
+	public void update() {
+		DrawQuadTex(menuBackground, 1088, 0, 192, 768);
+		grid.crtajMapu();
+		waveManager.update();
+		player.update();
+		updateUI();
+	}
+
+}

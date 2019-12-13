@@ -1,0 +1,17 @@
+package data;
+
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public class TowerCannonOrange extends Tower {
+	
+	public TowerCannonOrange(TowerType type, Tile startTile, CopyOnWriteArrayList<Neprijatelj> enemies) {
+		super(type, startTile, enemies);
+	}
+	
+	@Override
+	public void shoot(Neprijatelj target) {
+		super.projectiles.add(new ProjektilVatra(super.type.projectileType, super.target, super.getX(), super.getY(), 32, 32));
+		super.target.reduceHiddenHealth(super.type.projectileType.damage);
+	}
+
+}

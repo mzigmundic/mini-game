@@ -1,0 +1,46 @@
+package data;
+
+import org.lwjgl.input.Mouse;
+import org.newdawn.slick.opengl.Texture;
+import UI.KoristnickoSucelje;
+import helpers.MenadzerStanja;
+import helpers.MenadzerStanja.GameState;
+
+import static helpers.Grafika.*;
+
+public class GlavniIzbornik {
+	
+	private Texture pozadina;
+	private KoristnickoSucelje glavniIzbornikSucelje;
+	
+	public GlavniIzbornik() {
+		pozadina = UcitajTeksturuBrzo("glavniIzbornik");
+		glavniIzbornikSucelje = new KoristnickoSucelje();
+		glavniIzbornikSucelje.dodajGumb("gIgraj", "gumbIgraj", SIRINA / 2 - 128, (int) (VISINA *0.45f) );
+		glavniIzbornikSucelje.dodajGumb("gEditor", "gumbEditor", SIRINA / 2 - 128, (int) (VISINA *0.55f) );
+		glavniIzbornikSucelje.dodajGumb("gIzlaz", "gumbIzlaz", SIRINA / 2 - 128, (int) (VISINA *0.65f) );
+	}
+	
+	// Provjeri jel koristnik kliknuo koji gumb pa ovjezi
+	private void osvjeziGumbove() {
+		if (Mouse.isButtonDown(0)) {
+			if (glavniIzbornikSucelje.gumbKliknut("gIgraj")) {
+				MenadzerStanja.setState(GameState.IGRA);
+			}
+			if (glavniIzbornikSucelje.gumbKliknut("gEditor")) {
+				MenadzerStanja.setState(GameState.EDITOR_MAPE);
+			}
+			if (glavniIzbornikSucelje.gumbKliknut("gIzlaz")) {
+				System.exit(0);
+			}
+		}
+	}
+	
+	public void update() {
+		CrtajQTeksturu(pozadina, 0, 0, 2048, 1024);
+		glavniIzbornikSucelje.crtajGumbove();
+		osvjeziGumbove();
+	}
+	
+
+}

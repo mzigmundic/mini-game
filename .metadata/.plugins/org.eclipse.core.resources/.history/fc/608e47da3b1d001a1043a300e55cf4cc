@@ -1,0 +1,12 @@
+package com.glavni;
+
+public class NeprijateljB extends Neprijatelj {
+
+	public NeprijateljB(int tileX, int tileY, PlociceMap grid) {
+		super(tileX, tileY, grid);
+		this.postaviTeksturu("neprijateljA");
+		this.postaviBrzinu(40);
+		this.postaviEnergiju(250);
+	}
+
+}

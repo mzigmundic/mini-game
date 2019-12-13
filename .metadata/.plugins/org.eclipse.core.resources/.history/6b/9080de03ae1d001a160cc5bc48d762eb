@@ -1,0 +1,15 @@
+package com.glavni;
+
+public class ProjektilLed extends Projektil {
+
+	public ProjektilLed(TipProjektila tip, Neprijatelj meta, float x, float y, int sirina, int height) {
+		super(tip, meta, x, y, sirina, height);
+	}
+	
+	@Override
+	public void nanesiStetu() {
+		super.getTarget().postaviBrzinu(30f);
+		super.nanesiStetu();
+	}
+
+}

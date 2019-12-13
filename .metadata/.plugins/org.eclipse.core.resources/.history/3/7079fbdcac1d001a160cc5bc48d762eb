@@ -1,0 +1,112 @@
+package com.glavni;
+
+import static com.sporedni.Grafika.*;
+import static com.sporedni.Vrijeme.*;
+
+import org.newdawn.slick.opengl.Texture;
+
+public abstract class Projektil implements Jedinka {
+	
+	private Texture texture;
+	private float x, y, speed, xVelocity, yVelocity;
+	private int damage, width, height;
+	private Neprijatelj target;
+	private boolean alive;
+	
+	public Projektil(TipProjektila type, Neprijatelj target, float x, float y, int width, int height) {
+		this.texture = type.tekstura;
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.speed = type.brzinaProjektila;
+		this.damage = type.snagaProjektila;
+		this.target = target;
+		this.alive = true;
+		this.xVelocity = 0f;
+		this.yVelocity = 0f;
+		calculateDirection();
+	}
+	
+	private void calculateDirection() {
+		float totalAllowedMovement = 1.0f;
+		float xDistanceFromTarget = Math.abs(target.dohvatiX() - x + PLOCICA_SIZE / 4);
+		float yDistanceFromTarget = Math.abs(target.dohvatiY() - y + PLOCICA_SIZE / 4);
+		float totalDistanceFromTarget = xDistanceFromTarget + yDistanceFromTarget;
+		float xPercentOfMovement = xDistanceFromTarget / totalDistanceFromTarget;
+		xVelocity = xPercentOfMovement;
+		yVelocity = totalAllowedMovement - xPercentOfMovement;
+		
+		// Set direction based on position of target relative to tower
+		if (target.dohvatiX() < x) {
+			xVelocity *= -1;
+		}
+		if (target.dohvatiY() < y) {
+			yVelocity *= -1;
+		}
+	}
+	
+	// Deal damage to Enemy
+	public void damage() {
+		target.primiStetu(damage);
+		alive = false;
+	}
+	
+	public void osvjezi() {
+		if (alive) {
+			calculateDirection();
+			x += xVelocity * speed * Delta();
+			y += yVelocity * speed * Delta();
+			if (ProvjeriSudar(x, y, width, height, target.dohvatiX(), target.dohvatiY(), target.dohvatiSirinu(), target.dohvatiVisinu())) {
+				damage();
+			}
+			crtaj();
+		}
+	}
+	
+	public void crtaj() {
+		CrtajQTeksturu(texture, x + PLOCICA_SIZE / 4, y + PLOCICA_SIZE / 4, width, height);
+	}
+
+	public float dohvatiX() {
+		return x;
+	}
+
+	public float dohvatiY() {
+		return y;
+	}
+
+	public void postaviX(float x) {
+		this.x = x;
+	}
+
+	public void postaviY(float y) {
+		this.y = y;
+	}
+
+	public int dohvatiSirinu() {
+		return width;
+	}
+
+	public int dohvatiVisinu() {
+		return height;
+	}
+
+	public void postaviSirinu(int width) {
+		this.width = width;
+	}
+
+	public void postaviVisinu(int height) {
+		this.height = height;
+	}
+	
+	public Neprijatelj getTarget() {
+		return target;
+	}
+	
+	public void setAlive(boolean status) {
+		alive = status;
+	}
+	
+
+}

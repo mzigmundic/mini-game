@@ -1,0 +1,46 @@
+package data;
+
+import org.lwjgl.input.Mouse;
+import org.newdawn.slick.opengl.Texture;
+import UI.KoristnickoSucelje;
+import helpers.MenadzerStanja;
+import helpers.MenadzerStanja.GameState;
+
+import static helpers.Grafika.*;
+
+public class GlavniIzbornik {
+	
+	private Texture background;
+	private KoristnickoSucelje menuUI;
+	
+	public GlavniIzbornik() {
+		background = QuickLoad("glavniIzbornik");
+		menuUI = new KoristnickoSucelje();
+		menuUI.addButton("Play", "gumbIgraj", SIRINA / 2 - 128, (int) (VISINA *0.45f) );
+		menuUI.addButton("Editor", "gumbEditor", SIRINA / 2 - 128, (int) (VISINA *0.55f) );
+		menuUI.addButton("Quit", "gumbOdustani", SIRINA / 2 - 128, (int) (VISINA *0.65f) );
+	}
+	
+	// Check if a button is clicked by the user, and if so do an action
+	private void updateButtons() {
+		if (Mouse.isButtonDown(0)) {
+			if (menuUI.isButtonClicked("Play")) {
+				MenadzerStanja.setState(GameState.IGRA);
+			}
+			if (menuUI.isButtonClicked("Editor")) {
+				MenadzerStanja.setState(GameState.EDITOR_MAPE);
+			}
+			if (menuUI.isButtonClicked("Quit")) {
+				System.exit(0);
+			}
+		}
+	}
+	
+	public void update() {
+		DrawQuadTex(background, 0, 0, 2048, 1024);
+		menuUI.draw();
+		updateButtons();
+	}
+	
+
+}

@@ -1,0 +1,24 @@
+package data;
+
+import org.newdawn.slick.opengl.Texture;
+import static helpers.Grafika.*;
+
+public enum KonstProjektil {
+
+	BulletFireS(QuickLoad("bulletFireSmall"), 10, 500),
+	BulletFireB(QuickLoad("bulletFireBig"), 30, 500),
+	BulletIce(QuickLoad("bulletIce"), 5, 400),
+	BulletRed(QuickLoad("bulletRed"), 50, 500);
+	
+	
+	Texture texture;
+	int damage;
+	float speed;
+	
+	KonstProjektil(Texture texture, int damage, float speed) {
+		this.texture = texture;
+		this.damage = damage;
+		this.speed = speed;
+	}
+	
+}

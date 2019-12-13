@@ -1,0 +1,26 @@
+package data;
+
+public class TockaProvjerePutanje {
+	
+	private Plocica tile;
+	private int xSmjer, ySmjer;
+	
+	public TockaProvjerePutanje(Plocica tile, int xSmjer, int ySmjer) {
+		this.tile = tile;
+		this.xSmjer = xSmjer;
+		this.ySmjer = ySmjer;
+	}
+
+	public Plocica dohvatiPlocicu() {
+		return this.tile;
+	}
+
+	public int dohvatiXSmjer() {
+		return this.xSmjer;
+	}
+
+	public int dohvatiYSmjer() {
+		return this.ySmjer;
+	}
+	
+}

@@ -1,0 +1,19 @@
+package data;
+
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public class TowerCannonUltra extends Tower {
+
+	public TowerCannonUltra(TowerType type, Tile startTile, CopyOnWriteArrayList<Neprijatelj> enemies) {
+		super(type, startTile, enemies);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void shoot(Neprijatelj target) {
+		super.projectiles.add(new ProjectileRed(super.type.projectileType, super.target, super.getX(), super.getY(), 32, 32));
+		super.target.reduceHiddenHealth(super.type.projectileType.damage);
+		
+	}
+
+}

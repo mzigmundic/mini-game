@@ -1,0 +1,24 @@
+package data;
+
+import org.newdawn.slick.opengl.Texture;
+import static helpers.Grafika.*;
+
+public enum TipProjektil {
+
+	BulletFireS(QuickLoad("metakVatraMali"), 10, 500),
+	BulletFireB(QuickLoad("metakVatraVeliki"), 30, 500),
+	BulletIce(QuickLoad("metakLed"), 5, 400),
+	BulletRed(QuickLoad("metakCrveni"), 50, 500);
+	
+	
+	Texture tekstura;
+	int snagaMetka;
+	float brzinaMetka;
+	
+	TipProjektil(Texture texture, int damage, float speed) {
+		this.tekstura = texture;
+		this.snagaMetka = damage;
+		this.brzinaMetka = speed;
+	}
+	
+}

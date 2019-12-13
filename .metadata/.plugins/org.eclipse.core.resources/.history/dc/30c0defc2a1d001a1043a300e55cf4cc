@@ -1,0 +1,16 @@
+package data;
+
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public class TopGunLed extends Top {
+
+	public TopGunLed(TipTopa type, Plocica startTile, CopyOnWriteArrayList<Neprijatelj> enemies) {
+		super(type, startTile, enemies);
+	}
+	
+	@Override
+	public void shoot(Neprijatelj target) {
+		super.projectiles.add(new ProjektilLed(super.type.tipProjektila, super.target, super.dohvatiX(), super.getY(), 32, 32));
+		super.target.reduceHiddenHealth(super.type.tipProjektila.snagaProjektila);
+	}
+}

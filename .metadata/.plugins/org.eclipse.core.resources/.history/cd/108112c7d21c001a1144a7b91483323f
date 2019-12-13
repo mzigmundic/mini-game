@@ -1,0 +1,29 @@
+package data;
+
+import static helpers.Grafika.BeginSession;
+import org.lwjgl.opengl.Display;
+import helpers.Vrijeme;
+import helpers.StanjeSetup;
+
+public class AMain {
+	
+	public AMain() {
+		
+		// Pozivanje staticke metode u Grafika klasi za inicijaliziranje opengl klasa
+		BeginSession();
+		
+		// Glavna petlja igre
+		while(!Display.isCloseRequested()) {
+			Vrijeme.update();
+			StanjeSetup.update();
+			Display.update();
+			Display.sync(60);
+		}
+		Display.destroy();
+	}
+	
+	public static void main(String[] args) {
+		new AMain();
+	}
+	
+}

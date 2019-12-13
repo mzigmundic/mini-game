@@ -1,0 +1,42 @@
+package data;
+
+public class ValSetup {
+	
+	private float vrijemeOdPosljednjegVala, vrijemeIzmedjuNeprijatelja;
+	private int redniBrojVala, neprijateljaPoValu;
+	private Neprijatelj[] tipoviNeprijatelja;
+	private Val currentWave;
+	
+	public ValSetup(Neprijatelj[] tipoviNeprijatelja, float vrijemeIzmedjuNeprijatelja, int neprijateljaPoValu) {
+		this.tipoviNeprijatelja = tipoviNeprijatelja;
+		this.vrijemeIzmedjuNeprijatelja = vrijemeIzmedjuNeprijatelja;
+		this.neprijateljaPoValu = neprijateljaPoValu;
+		this.vrijemeOdPosljednjegVala = 0;
+		this.redniBrojVala = 0;
+		this.currentWave = null;
+		newWave();
+	}
+	
+	public void update( ) {
+		if (!currentWave.jeValZavrsen()) {
+			currentWave.osvjezi();
+		} else {
+			newWave();
+		}
+	}
+	
+	public void newWave() {
+		currentWave = new Val(tipoviNeprijatelja, vrijemeIzmedjuNeprijatelja, neprijateljaPoValu);
+		redniBrojVala++;
+		System.out.println("Beginning Wave " + redniBrojVala);
+	}
+	
+	public Val getCurrentWave() {
+		return currentWave;
+	}
+	
+	public int getWaveNumber() {
+		return redniBrojVala;
+	}
+
+}

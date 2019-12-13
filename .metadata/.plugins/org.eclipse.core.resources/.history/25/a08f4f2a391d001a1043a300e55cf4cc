@@ -1,0 +1,92 @@
+package data;
+
+import static helpers.Grafika.*;
+import static helpers.Level.*;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.newdawn.slick.opengl.Texture;
+
+import UI.KoristnickoSucelje;
+import UI.KoristnickoSucelje.Menu;
+
+
+public class EditorMape {
+
+	private Texture pozadinaIzbornika;
+	private PlociceMap mapa;
+	private TipPlocice[] tipovi;
+	private int indexTipova;
+	private KoristnickoSucelje editorSucelje;
+	private Menu menuEditor;
+
+	public EditorMape() {
+		this.mapa = UcitajMapu("mojaMapa");
+		this.indexTipova = 0;
+		this.tipovi = new TipPlocice[3];
+		this.tipovi[0] = TipPlocice.Pijesak;
+		this.tipovi[1] = TipPlocice.Zemlja;
+		this.tipovi[2] = TipPlocice.Voda;
+		this.pozadinaIzbornika = UcitajTeksturuBrzo("menu_background");
+		postaviSucelje();
+	}
+	
+	private void postaviSucelje() {
+		editorSucelje = new KoristnickoSucelje();
+		editorSucelje.napraviMenu("IzborPlocica", 1088, 100, 192, 960, 2, 0);
+		menuEditor= editorSucelje.dohvatiMenu("IzborPlocica");
+		menuEditor.brziDodajGumb("Pijesak", "plocicaPijesak");
+		menuEditor.brziDodajGumb("Zemlja", "plocicaZemlja");
+		menuEditor.brziDodajGumb("Voda", "plocicaVoda");
+	}
+
+	public void osvjezi() {
+		crtaj();
+
+		// Obradi unos misa
+		if (Mouse.next()) {
+			boolean misKliknut = Mouse.isButtonDown(0);
+			if (misKliknut) {
+				if (menuEditor.gumbKliknut("Pijesak")) {
+					indexTipova = 0;
+				} else if (menuEditor.gumbKliknut("Zemlja")) {
+					indexTipova = 1;
+				} else if (menuEditor.gumbKliknut("Voda")) {
+					indexTipova = 2;
+				} else {
+					postaviPlocicu();
+				}
+			}
+		}
+
+		// Obradi unos s tipkovnice
+		while (Keyboard.next()) {
+			if (Keyboard.getEventKey() == Keyboard.KEY_RIGHT && Keyboard.getEventKeyState()) {
+				povecajIndex();
+			}
+			if (Keyboard.getEventKey() == Keyboard.KEY_S && Keyboard.getEventKeyState()) {
+				SnimiMapu("mapTest", mapa);
+			}
+		}
+	}
+	
+	private void crtaj() {
+		CrtajQTeksturu(pozadinaIzbornika, 1088, 0, 192, 768);
+		mapa.crtajMapu();
+		editorSucelje.crtajGumbove();
+	}
+
+	private void postaviPlocicu() {
+		mapa.postaviPlocicu((int) Math.floor(Mouse.getX() / PLOCICA_SIZE), (int) Math.floor((VISINA - Mouse.getY() - 1) / PLOCICA_SIZE),
+				tipovi[indexTipova]);
+	}
+	
+	
+	// Omogucije da editor izabere koji je tip plocice kliknut
+	public void povecajIndex() {
+		indexTipova++;
+		if (indexTipova > tipovi.length - 1) {
+			indexTipova = 0;
+		}
+	}
+
+}

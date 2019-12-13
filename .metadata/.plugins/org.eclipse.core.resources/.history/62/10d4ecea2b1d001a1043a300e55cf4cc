@@ -1,0 +1,98 @@
+package data;
+
+import org.newdawn.slick.opengl.Texture;
+import static helpers.Grafika.*;
+
+public class Plocica {
+	
+	private float x, y;
+	private int sirina, visina;
+	private Texture tekstura;
+	private TipPlocice tipPlocice;
+	private boolean zauzeta;
+	
+	public Plocica(float x, float y, int sirina, int visina, TipPlocice tip) {
+		this.x = x;
+		this.y = y;
+		this.sirina = sirina;
+		this.visina = visina;
+		this.tipPlocice = tip;
+		this.tekstura = UcitajTeksturuBrzo(tip.imeTeksture);
+		if(tip.mozeGraditiToranj) {
+			zauzeta = false;
+		} else {
+			zauzeta = true;
+		}
+	}
+	
+	public void crtaj() {
+		CrtajQTeksturu(tekstura, x, y, sirina, visina);
+	}
+
+	public float dohvatiX() {
+		return x;
+	}
+	
+	public int dohvatiPozicijuX() {
+		return (int) x / PLOCICA_SIZE;
+	}
+	
+	public int dohvatiPozicijuY() { 
+		return (int) y / PLOCICA_SIZE;
+	}
+
+	public void postaviX(float x) {
+		this.x = x;
+	}
+
+	public float dohvatiY() {
+		return y;
+	}
+
+	public void postaviY(float y) {
+		this.y = y;
+	}
+
+	public int getWidth() {
+		return sirina;
+	}
+
+	public void setWidth(int width) {
+		this.sirina = width;
+	}
+
+	public int getHeight() {
+		return visina;
+	}
+
+	public void setHeight(int height) {
+		this.visina = height;
+	}
+
+	public Texture getTexture() {
+		return tekstura;
+	}
+
+	public void setTexture(Texture texture) {
+		this.tekstura = texture;
+	}
+
+	public TipPlocice getType() {
+		return tipPlocice;
+	}
+
+	public void setType(TipPlocice type) {
+		this.tipPlocice = type;
+	}
+
+	public boolean getOccupied() {
+		return zauzeta;
+	}
+
+	public void setOccupied(boolean occupied) {
+		this.zauzeta = occupied;
+	}	
+	
+	
+	
+}

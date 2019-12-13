@@ -1,0 +1,19 @@
+package data;
+
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public class TopGunUltra extends Top {
+
+	public TopGunUltra(TipTopa type, Plocica startTile, CopyOnWriteArrayList<Neprijatelj> enemies) {
+		super(type, startTile, enemies);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void shoot(Neprijatelj target) {
+		super.projektili.add(new ProjektilCrveni(super.type.tipProjektila, super.meta, super.dohvatiX(), super.dohvatiY(), 32, 32));
+		super.meta.smanjiSkrivenuEnergiju(super.type.tipProjektila.snagaProjektila);
+		
+	}
+
+}

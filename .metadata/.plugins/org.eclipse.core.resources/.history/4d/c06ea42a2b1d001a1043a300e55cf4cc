@@ -1,0 +1,14 @@
+package data;
+
+public interface Jedinka {
+	public float dohvatiX();
+	public float dohvatiY();
+	public void postaviX(float x);
+	public void postaviY(float y);
+	public int dohvatiSirinu();
+	public int getHeight();
+	public void setWidth(int width);
+	public void setHeight(int height);
+	public void osvjezi();
+	public void draw();
+}

@@ -1,0 +1,158 @@
+package data;
+
+import org.newdawn.slick.opengl.Texture;
+import static helpers.Grafika.CrtajQTeksturu;
+import static helpers.Grafika.CrtajQTeksturuRot;
+import static helpers.Vrijeme.Delta;
+import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public abstract class Top implements Jedinka {
+	
+	private float x, y, vrijemeOdPosljednjegPucnja, ucestalostPucanja, kut;
+	private int sirina, visina, domet, cijena;
+	public Neprijatelj meta;
+	private Texture[] teksture;
+	private CopyOnWriteArrayList<Neprijatelj> neprijatelji;
+	private boolean naciljan;
+	public ArrayList<Projektil> projektili;
+	public TipTopa tip;
+	
+	public Top(TipTopa tip, Plocica pocetnaPlocica, CopyOnWriteArrayList<Neprijatelj> neprijatelji) {
+		this.tip = tip;
+		this.teksture = tip.tekstura;
+		this.domet = tip.domet;
+		this.cijena = tip.cijena;
+		this.x = pocetnaPlocica.dohvatiX();
+		this.y = pocetnaPlocica.dohvatiY();
+		this.sirina = pocetnaPlocica.dohvatiSirinu();
+		this.visina = pocetnaPlocica.dohvatiVisinu();
+		this.neprijatelji = neprijatelji;
+		this.naciljan = false;
+		this.vrijemeOdPosljednjegPucnja = 0f;
+		this.projektili = new ArrayList<Projektil>();
+		this.ucestalostPucanja = tip.firingSpeed;
+		this.kut = 0f;
+	}
+	
+	private Neprijatelj acquireTarget() {
+		Neprijatelj closest = null;
+		// Arbitrary distance (larger than map), to help with sorting Enemy distances
+		float closestDistance = 10000;
+		// go through each Enemy in 'enemies' and return nearest one
+		for (Neprijatelj e : neprijatelji) {
+			if (isInRange(e) && findDistance(e) < closestDistance && e.dohvatiSkrivenuEnergiju() > 0) {
+				closestDistance = findDistance(e);
+				closest = e;
+			}
+		}
+		// If an enemy exists and is returned, targeted = true
+		if (closest != null) {
+			naciljan = true;
+		}
+		return closest;
+	}
+	
+	private boolean isInRange(Neprijatelj e) {
+		float xDistance = Math.abs(e.dohvatiX() - x);
+		float yDistance = Math.abs(e.dohvatiY() - y);
+		if (xDistance < domet && yDistance < domet) {
+			return true;
+		}
+		return false;
+	}
+	
+	private float findDistance(Neprijatelj e) {
+		float xDistance = Math.abs(e.dohvatiX() - x);
+		float yDistance = Math.abs(e.dohvatiY() - y);
+		return xDistance + yDistance;
+	}
+	
+	private float calculateAngle() {
+		double angleTemp = Math.atan2(meta.dohvatiY() - y, meta.dohvatiX() - x);
+		return (float) Math.toDegrees(angleTemp) - 90;
+	}
+	
+	// Abstract method for 'shoot', must be overriden in subclasses
+	public abstract void shoot(Neprijatelj target);
+	
+	public void updateEnemyList(CopyOnWriteArrayList<Neprijatelj> newList) {
+		neprijatelji = newList;
+	}
+	
+	public void osvjezi() {
+		if (!naciljan || meta.dohvatiSkrivenuEnergiju() < 0) {
+			meta = acquireTarget();
+		} else {
+			kut = calculateAngle();
+			if (vrijemeOdPosljednjegPucnja > ucestalostPucanja) {
+				shoot(meta);
+				vrijemeOdPosljednjegPucnja = 0;
+			}
+		}
+		
+		if (meta == null || meta.jeZiv() == false) {
+			naciljan = false;
+		}
+		
+		vrijemeOdPosljednjegPucnja += Delta();
+		
+		for (Projektil p : projektili) {
+			p.osvjezi();
+		}
+		
+		crtaj();
+	}
+
+	public void crtaj() {
+		CrtajQTeksturu(teksture[0], x, y, sirina, visina);
+		if (teksture.length > 1) {
+			for (int i = 1; i < teksture.length; i++ ) {
+				CrtajQTeksturuRot(teksture[i], x, y, sirina, visina, kut);
+			}
+		}
+	}
+
+	public float dohvatiX() {
+		return x;
+	}
+
+	public float dohvatiY() {
+		return y;
+	}
+
+	public void postaviX(float x) {
+		this.x = x;
+	}
+
+	public void postaviY(float y) {
+		this.y = y;
+	}
+
+	public int dohvatiSirinu() {
+		return sirina;
+	}
+
+	public int dohvatiVisinu() {
+		return visina;
+	}
+
+	public void postaviSirinu(int width) {
+		this.sirina = width;
+	}
+
+	public void postaviVisinu(int height) {
+		this.visina = height;
+	}
+	
+	public Neprijatelj getTarget() {
+		return meta;
+	}
+	
+	public int getCost() {
+		return cijena;
+	}
+
+	
+
+}

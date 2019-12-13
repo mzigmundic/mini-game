@@ -1,0 +1,26 @@
+package data;
+
+import org.newdawn.slick.opengl.Texture;
+import static helpers.Grafika.*;
+
+public enum KonstantaTop {
+
+	CannonOrange(new Texture[] {QuickLoad("cannonBaseOrange"), QuickLoad("cannonGunOrange")}, KonstProjektil.BulletFireS, 10, 1000, 1, 30),
+	CannonIce(new Texture[] {QuickLoad("cannonBaseIce"), QuickLoad("cannonGunIce")}, KonstProjektil.BulletIce, 20, 1000, 2, 40),
+	CannonUltra(new Texture[] {QuickLoad("cannonBaseUltra"), QuickLoad("cannonGunUltra")}, KonstProjektil.BulletRed, 20, 1000, 2, 80);
+	
+	Texture[] textures;
+	KonstProjektil projectileType;
+	int damage, range, cost;
+	float firingSpeed;
+	
+	KonstantaTop(Texture[] textures, KonstProjektil projectileType, int damage, int range, float firingSpeed, int cost) {
+		this.textures = textures;
+		this.projectileType = projectileType;
+		this.damage = damage;
+		this.range = range;
+		this.firingSpeed = firingSpeed;
+		this.cost = cost;
+	}
+	
+}

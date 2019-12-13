@@ -1,0 +1,9 @@
+package data;
+
+public class ProjektilCrveni extends Projektil {
+
+	public ProjektilCrveni(ProjektilTip type, Neprijatelj target, float x, float y, int width, int height) {
+		super(type, target, x, y, width, height);
+	}
+
+}

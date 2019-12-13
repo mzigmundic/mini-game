@@ -1,0 +1,26 @@
+package data;
+
+public class TockaProvjere {
+	
+	private Plocica tile;
+	private int xDirection, yDirection;
+	
+	public TockaProvjere(Plocica tile, int xDirection, int yDirection) {
+		this.tile = tile;
+		this.xDirection = xDirection;
+		this.yDirection = yDirection;
+	}
+
+	public Plocica getTile() {
+		return tile;
+	}
+
+	public int getxDirection() {
+		return xDirection;
+	}
+
+	public int getyDirection() {
+		return yDirection;
+	}
+	
+}

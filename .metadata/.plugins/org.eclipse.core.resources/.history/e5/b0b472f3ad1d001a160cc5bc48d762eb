@@ -1,0 +1,9 @@
+package com.glavni;
+
+public class ProjektilCrveni extends Projektil {
+
+	public ProjektilCrveni(TipProjektila tip, Neprijatelj meta, float x, float y, int sirina, int height) {
+		super(tip, meta, x, y, sirina, height);
+	}
+
+}

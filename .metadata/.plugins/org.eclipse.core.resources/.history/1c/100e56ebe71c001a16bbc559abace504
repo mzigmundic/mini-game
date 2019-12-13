@@ -1,0 +1,92 @@
+package data;
+
+import static helpers.Grafika.*;
+import static helpers.Level.*;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.newdawn.slick.opengl.Texture;
+
+import UI.KoristnickoSucelje;
+import UI.KoristnickoSucelje.glavniIzbornik;
+
+
+public class EditorMape {
+
+	private Texture pozadinaIzbornika;
+	private PlociceMap mapa;
+	private TipPlocice[] tipovi;
+	private int indexTipova;
+	private KoristnickoSucelje editorUI;
+	private glavniIzbornik opcijaIzborPlocica;
+
+	public EditorMape() {
+		this.mapa = UcitajMapu("mojaMapa");
+		this.indexTipova = 0;
+		this.tipovi = new TipPlocice[3];
+		this.tipovi[0] = TipPlocice.Grass;
+		this.tipovi[1] = TipPlocice.Dirt;
+		this.tipovi[2] = TipPlocice.Water;
+		this.pozadinaIzbornika = QuickLoad("menu_background");
+		setupUI();
+	}
+	
+	private void setupUI() {
+		editorUI = new KoristnickoSucelje();
+		editorUI.createMenu("TylePicker", 1088, 100, 192, 960, 2, 0);
+		opcijaIzborPlocica= editorUI.getMenu("TylePicker");
+		opcijaIzborPlocica.quickAdd("Grass", "grass64");
+		opcijaIzborPlocica.quickAdd("Dirt", "dirt64");
+		opcijaIzborPlocica.quickAdd("Water", "water64");
+	}
+
+	public void update() {
+		draw();
+
+		// Handle Mouse Input
+		if (Mouse.next()) {
+			boolean mouseClicked = Mouse.isButtonDown(0);
+			if (mouseClicked) {
+				if (opcijaIzborPlocica.isButtonClicked("Grass")) {
+					indexTipova = 0;
+				} else if (opcijaIzborPlocica.isButtonClicked("Dirt")) {
+					indexTipova = 1;
+				} else if (opcijaIzborPlocica.isButtonClicked("Water")) {
+					indexTipova = 2;
+				} else {
+					setTile();
+				}
+			}
+		}
+
+		// Handle Keyboard Input
+		while (Keyboard.next()) {
+			if (Keyboard.getEventKey() == Keyboard.KEY_RIGHT && Keyboard.getEventKeyState()) {
+				moveIndex();
+			}
+			if (Keyboard.getEventKey() == Keyboard.KEY_S && Keyboard.getEventKeyState()) {
+				SnimiMapu("mapTest", mapa);
+			}
+		}
+	}
+	
+	private void draw() {
+		DrawQuadTex(pozadinaIzbornika, 1088, 0, 192, 768);
+		mapa.crtajMapu();
+		editorUI.draw();
+	}
+
+	private void setTile() {
+		mapa.postaviPlocicu((int) Math.floor(Mouse.getX() / PLOCICA_SIZE), (int) Math.floor((VISINA - Mouse.getY() - 1) / PLOCICA_SIZE),
+				tipovi[indexTipova]);
+	}
+	
+	
+	// Allows editor to change which TileType is selected
+	public void moveIndex() {
+		indexTipova++;
+		if (indexTipova > tipovi.length - 1) {
+			indexTipova = 0;
+		}
+	}
+
+}

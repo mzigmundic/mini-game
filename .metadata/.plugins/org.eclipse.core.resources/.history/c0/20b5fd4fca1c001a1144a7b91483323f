@@ -1,0 +1,9 @@
+package data;
+
+public class ProjectileRed extends Projektil {
+
+	public ProjectileRed(ProjectileType type, Neprijatelj target, float x, float y, int width, int height) {
+		super(type, target, x, y, width, height);
+	}
+
+}

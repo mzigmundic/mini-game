@@ -1,0 +1,15 @@
+package data;
+
+public class ProjektilLed extends Projektil {
+
+	public ProjektilLed(KonstProjektil type, Neprijatelj target, float x, float y, int width, int height) {
+		super(type, target, x, y, width, height);
+	}
+	
+	@Override
+	public void damage() {
+		super.getTarget().setSpeed(30f);
+		super.damage();
+	}
+
+}

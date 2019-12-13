@@ -1,0 +1,14 @@
+package data;
+
+import static helpers.Grafika.QuickLoad;
+
+public class EnemyAlien2 extends Neprijatelj {
+
+	public EnemyAlien2(int tileX, int tileY, TileGrid grid) {
+		super(tileX, tileY, grid);
+		this.setTexture("UFO64_2");
+		this.setSpeed(40);
+		this.setHealth(250);
+	}
+
+}

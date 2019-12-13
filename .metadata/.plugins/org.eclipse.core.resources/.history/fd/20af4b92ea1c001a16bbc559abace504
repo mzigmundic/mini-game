@@ -1,0 +1,74 @@
+package data;
+
+import static helpers.Grafika.QuickLoad;
+import static helpers.Grafika.DrawQuadTex;
+import org.lwjgl.input.Mouse;
+import org.newdawn.slick.opengl.Texture;
+
+import UI.KoristnickoSucelje;
+import UI.KoristnickoSucelje.Menu;
+import helpers.MenadzerStanja;
+
+public class Igra {
+	
+	private PlociceMap mapa;
+	private Igrac igrac;
+	private ValSetup valSetup;
+	private KoristnickoSucelje igraUI;
+	private Menu ibornikTopova;
+	private Texture igraPozadinaOpcija;
+	private Neprijatelj[] enemyTypes;
+	
+	public Igra(PlociceMap grid) {
+		this.mapa = grid;
+		enemyTypes = new Neprijatelj[2];
+		enemyTypes[0] = new NeprijateljA(2, 0, grid);
+		enemyTypes[1] = new NeprijateljB(2, 0, grid);
+		valSetup = new ValSetup(enemyTypes, 2, 4);
+		igrac = new Igrac(grid, valSetup);
+		igrac.setup();
+		this.igraPozadinaOpcija = QuickLoad("pozadinaIgra");
+		setupUI();
+	}
+	
+	private void setupUI() {
+		igraUI = new KoristnickoSucelje();
+		igraUI.createMenu("TowerPicker", 1088, 100, 192, 960, 2, 0);
+		ibornikTopova = igraUI.getMenu("TowerPicker");
+		ibornikTopova.brziDodajGumb("CannonOrange", "cannonGunOrange");
+		ibornikTopova.brziDodajGumb("CannonIce", "cannonGunIce");
+		ibornikTopova.brziDodajGumb("CannonUltra", "cannonGunUltra");
+	}
+	
+	private void updateUI() {
+		igraUI.draw();
+		igraUI.drawString(1140, 470, "Wave: " + valSetup.getWaveNumber());
+		igraUI.drawString(1140, 570, "Lives: " + Igrac.Lives);
+		igraUI.drawString(1140, 640, "Money: " + Igrac.Cash);
+		igraUI.drawString(0, 0, MenadzerStanja.frejmovaUProslojSekundi + " fps");
+		
+		if (Mouse.next()) {
+			boolean mouseClicked = Mouse.isButtonDown(0);
+			if (mouseClicked) {
+				if (ibornikTopova.gumbKliknut("CannonOrange")) {
+					igrac.pickTower(new TopGunNarancasti(TipTopa.TopNarancasti, mapa.dohvatiPlocicu(0, 0), valSetup.getCurrentWave().getEnemyList()));
+				}
+				if (ibornikTopova.gumbKliknut("CannonIce")) {
+					igrac.pickTower(new TopGunLed(TipTopa.TopLed, mapa.dohvatiPlocicu(0, 0), valSetup.getCurrentWave().getEnemyList()));
+				}
+				if (ibornikTopova.gumbKliknut("CannonUltra")) {
+					igrac.pickTower(new TopGunUltra(TipTopa.CannonUltra, mapa.dohvatiPlocicu(0, 0), valSetup.getCurrentWave().getEnemyList()));
+				}
+			}
+		}
+	}
+	
+	public void update() {
+		DrawQuadTex(igraPozadinaOpcija, 1088, 0, 192, 768);
+		mapa.crtajMapu();
+		valSetup.update();
+		igrac.update();
+		updateUI();
+	}
+
+}

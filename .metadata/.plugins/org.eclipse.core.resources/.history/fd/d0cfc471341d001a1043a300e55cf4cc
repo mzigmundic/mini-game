@@ -1,0 +1,74 @@
+package data;
+
+import static helpers.Grafika.UcitajTeksturuBrzo;
+import static helpers.Grafika.CrtajQTeksturu;
+import org.lwjgl.input.Mouse;
+import org.newdawn.slick.opengl.Texture;
+
+import UI.KoristnickoSucelje;
+import UI.KoristnickoSucelje.Menu;
+import helpers.MenadzerStanja;
+
+public class Igra {
+	
+	private PlociceMap mapa;
+	private Igrac igrac;
+	private ValSetup valSetup;
+	private KoristnickoSucelje igraSucelje;
+	private Menu menuIgra;
+	private Texture igraPozadinaOpcija;
+	private Neprijatelj[] listaTipovaNeprijatelja;
+	
+	public Igra(PlociceMap mapa) {
+		this.mapa = mapa;
+		listaTipovaNeprijatelja = new Neprijatelj[2];
+		listaTipovaNeprijatelja[0] = new NeprijateljA(2, 0, mapa);
+		listaTipovaNeprijatelja[1] = new NeprijateljB(2, 0, mapa);
+		valSetup = new ValSetup(listaTipovaNeprijatelja, 2, 4);
+		igrac = new Igrac(mapa, valSetup);
+		igrac.postavi();
+		this.igraPozadinaOpcija = UcitajTeksturuBrzo("pozadinaIgra");
+		postaviSucelje();
+	}
+	
+	private void postaviSucelje() {
+		igraSucelje = new KoristnickoSucelje();
+		igraSucelje.napraviMenu("IzborTopova", 1088, 100, 192, 960, 2, 0);
+		menuIgra = igraSucelje.dohvatiMenu("IzborTopova");
+		menuIgra.brziDodajGumb("TopNarancasti", "topGunNarancasti");
+		menuIgra.brziDodajGumb("TopLed", "topGunLed");
+		menuIgra.brziDodajGumb("TopUltra", "topGunUltra");
+	}
+	
+	private void osvjeziSucelje() {
+		igraSucelje.crtajGumbove();
+		igraSucelje.ispisStringa(1140, 470, "Val: " + valSetup.getWaveNumber());
+		igraSucelje.ispisStringa(1140, 570, "Zivoti: " + Igrac.Zivoti);
+		igraSucelje.ispisStringa(1140, 640, "Pare: " + Igrac.Pare);
+		igraSucelje.ispisStringa(0, 0, MenadzerStanja.frejmovaUProslojSekundi + " fps");
+		
+		if (Mouse.next()) {
+			boolean mouseClicked = Mouse.isButtonDown(0);
+			if (mouseClicked) {
+				if (menuIgra.gumbKliknut("TopNarancasti")) {
+					igrac.izaberiTop(new TopGunNarancasti(TipTopa.TopNarancasti, mapa.dohvatiPlocicu(0, 0), valSetup.getCurrentWave().getEnemyList()));
+				}
+				if (menuIgra.gumbKliknut("TopLed")) {
+					igrac.izaberiTop(new TopGunLed(TipTopa.TopLed, mapa.dohvatiPlocicu(0, 0), valSetup.getCurrentWave().getEnemyList()));
+				}
+				if (menuIgra.gumbKliknut("TopUltra")) {
+					igrac.izaberiTop(new TopGunUltra(TipTopa.TopUltra, mapa.dohvatiPlocicu(0, 0), valSetup.getCurrentWave().getEnemyList()));
+				}
+			}
+		}
+	}
+	
+	public void osvjezi() {
+		CrtajQTeksturu(igraPozadinaOpcija, 1088, 0, 192, 768);
+		mapa.crtajMapu();
+		valSetup.update();
+		igrac.osvjezi();
+		osvjeziSucelje();
+	}
+
+}

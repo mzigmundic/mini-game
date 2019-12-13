@@ -1,0 +1,46 @@
+package data;
+
+import org.lwjgl.input.Mouse;
+import org.newdawn.slick.opengl.Texture;
+import UI.KoristnickoSucelje;
+import helpers.MenadzerStanja;
+import helpers.MenadzerStanja.GameState;
+
+import static helpers.Grafika.*;
+
+public class GlavniIzbornik {
+	
+	private Texture pozadina;
+	private KoristnickoSucelje menuUI;
+	
+	public GlavniIzbornik() {
+		pozadina = QuickLoad("glavniIzbornik");
+		menuUI = new KoristnickoSucelje();
+		menuUI.dodajGumb("gIgraj", "gumbIgraj", SIRINA / 2 - 128, (int) (VISINA *0.45f) );
+		menuUI.dodajGumb("gEditor", "gumbEditor", SIRINA / 2 - 128, (int) (VISINA *0.55f) );
+		menuUI.dodajGumb("gIzlaz", "gumbIzlaz", SIRINA / 2 - 128, (int) (VISINA *0.65f) );
+	}
+	
+	// Check if a button is clicked by the user, and if so do an action
+	private void osvjeziGumbove() {
+		if (Mouse.isButtonDown(0)) {
+			if (menuUI.isButtonClicked("gIgraj")) {
+				MenadzerStanja.setState(GameState.IGRA);
+			}
+			if (menuUI.isButtonClicked("gEditor")) {
+				MenadzerStanja.setState(GameState.EDITOR_MAPE);
+			}
+			if (menuUI.isButtonClicked("gIzlaz")) {
+				System.exit(0);
+			}
+		}
+	}
+	
+	public void update() {
+		DrawQuadTex(pozadina, 0, 0, 2048, 1024);
+		menuUI.crtajGumbove();
+		osvjeziGumbove();
+	}
+	
+
+}

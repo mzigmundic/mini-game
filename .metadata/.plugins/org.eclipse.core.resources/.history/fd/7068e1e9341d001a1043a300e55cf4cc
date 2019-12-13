@@ -1,0 +1,76 @@
+package data;
+
+import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import static helpers.Vrijeme.*;
+import static helpers.Grafika.PLOCICA_SIZE;
+
+public class Val {
+
+	private float vrijemeOdPosljednjegSpawna, spawnTime;
+	private Neprijatelj[] enemyTypes;
+	private CopyOnWriteArrayList<Neprijatelj> enemyList;
+	private int enemiesPerWave, enemiesSpawned;
+	private boolean waveCompleted;
+
+	public Val(Neprijatelj[] enemyTypes, float spawnTime, int enemiesPerWave) {
+		this.enemyTypes = enemyTypes;
+		this.spawnTime = spawnTime;
+		this.enemiesPerWave = enemiesPerWave;
+		this.enemiesSpawned = 0;
+		this.vrijemeOdPosljednjegSpawna = 0;
+		this.enemyList = new CopyOnWriteArrayList<Neprijatelj>();
+		this.waveCompleted = false;
+		
+		spawnaj();
+	}
+
+	public void osvjezi() {
+		// Assume all enemies are dead, until for loop proves otherwise
+		boolean sviNeprijateljiMrtvi = true;
+		if (enemiesSpawned < enemiesPerWave) {
+			vrijemeOdPosljednjegSpawna += Delta();
+			if (vrijemeOdPosljednjegSpawna > spawnTime) {
+				spawnaj();
+				vrijemeOdPosljednjegSpawna = 0;
+			}
+		}
+		for (Neprijatelj e : enemyList) {
+			if (e.jeZiv()) {
+				sviNeprijateljiMrtvi = false;
+				e.osvjezi();
+				e.crtaj();
+			} else {
+				enemyList.remove(e);
+			}
+		}
+		if (sviNeprijateljiMrtvi) {
+			waveCompleted = true;
+		}
+	}
+
+	public void spawnaj() {
+		int enemyChosen = 0;
+		Random random = new Random();
+		enemyChosen= random.nextInt(enemyTypes.length);
+		enemyList.add(new Neprijatelj(enemyTypes[enemyChosen].dohvatiTeksturu(), enemyTypes[enemyChosen].dohvatiPocetnuPlocicu(),
+				enemyTypes[enemyChosen].dohvatiMapuPlocica(), PLOCICA_SIZE, PLOCICA_SIZE, enemyTypes[enemyChosen].dohvatiBrzinu(), enemyTypes[enemyChosen].dohvatiEnergiju()));
+		enemiesSpawned++;
+	}
+	
+	public boolean isCompleted() {
+		return waveCompleted;
+	}
+	
+	public CopyOnWriteArrayList<Neprijatelj> getEnemyList() {
+		return enemyList;
+	}
+
+}
+
+
+
+
+
+

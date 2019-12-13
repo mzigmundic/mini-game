@@ -1,0 +1,26 @@
+package data;
+
+import org.newdawn.slick.opengl.Texture;
+import static helpers.Grafika.*;
+
+public enum TipTopa {
+
+	TopNarancasti(new Texture[] {UcitajTeksturuBrzo("topBazaNarancasta"), UcitajTeksturuBrzo("TopGunNarancasti")}, TipProjektila.MetakVatraMali, 10, 1000, 1, 30),
+	TopLed(new Texture[] {UcitajTeksturuBrzo("cannonBaseIce"), UcitajTeksturuBrzo("cannonGunIce")}, TipProjektila.MetakVatraCrveni, 20, 1000, 2, 40),
+	CannonUltra(new Texture[] {UcitajTeksturuBrzo("cannonBaseUltra"), UcitajTeksturuBrzo("cannonGunUltra")}, TipProjektila.MetakCrveni, 20, 1000, 2, 80);
+	
+	Texture[] tekstura;
+	TipProjektila tipProjektila;
+	int damage, range, cost;
+	float firingSpeed;
+	
+	TipTopa(Texture[] tekstura, TipProjektila tipProjektila, int damage, int range, float firingSpeed, int cost) {
+		this.tekstura = tekstura;
+		this.tipProjektila = tipProjektila;
+		this.damage = damage;
+		this.range = range;
+		this.firingSpeed = firingSpeed;
+		this.cost = cost;
+	}
+	
+}

@@ -1,0 +1,10 @@
+package data;
+
+public class NeprijateljA extends Neprijatelj {
+
+	public NeprijateljA(int tileX, int tileY, TileGrid grid) {
+		super(tileX, tileY, grid);
+
+	}
+
+}

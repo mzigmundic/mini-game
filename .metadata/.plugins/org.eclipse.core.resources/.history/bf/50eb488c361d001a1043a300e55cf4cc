@@ -1,0 +1,292 @@
+package data;
+
+import org.newdawn.slick.opengl.Texture;
+import static helpers.Grafika.*;
+import static helpers.Vrijeme.*;
+import java.util.ArrayList;
+
+public class Neprijatelj implements Jedinka {
+	private int sirina, visina, trenutnaTocka;
+	private float brzina, x, y, energija, pocetnaEnergija, skrivenaEnergija;
+	private Texture tekstura, energijaPozadina, energijaZeleno, energijaOkvir;
+	private Plocica pocetnaPlocica;
+	private boolean prvi, ziv;
+	private PlociceMap mapa;
+	private ArrayList<MjestoProvjerePutanje> listaTocakaProvjere;
+	private int[] smjerovi;
+	
+	public Neprijatelj(int plocicaX, int plocicaY, PlociceMap mapa) {
+		this.tekstura = UcitajTeksturuBrzo("neprijateljB");
+		this.energijaPozadina = UcitajTeksturuBrzo("energijaPozadina");
+		this.energijaZeleno = UcitajTeksturuBrzo("energijaZeleno");
+		this.energijaOkvir = UcitajTeksturuBrzo("energijaOkvir");
+		this.pocetnaPlocica= mapa.dohvatiPlocicu(plocicaX, plocicaY);
+		this.x = pocetnaPlocica.dohvatiX();
+		this.y = pocetnaPlocica.dohvatiY();
+		this.sirina = PLOCICA_SIZE;
+		this.visina = PLOCICA_SIZE;
+		this.brzina = 30;
+		this.energija = 200;
+		this.pocetnaEnergija = energija;
+		this.skrivenaEnergija = energija;
+		this.mapa = mapa;
+		this.prvi = true;
+		this.ziv = true;
+		this.listaTocakaProvjere = new ArrayList<MjestoProvjerePutanje>();
+		this.smjerovi = new int[2];
+		// x smjer
+		this.smjerovi[0] = 0;
+		// y smjer
+		this.smjerovi[1] = 0;
+		this.smjerovi = pronadjiSljedecuPutanju(pocetnaPlocica);
+		this.trenutnaTocka = 0;
+		popuniListuTocakaProvjere();
+	}
+	
+	public Neprijatelj(Texture tekstura, Plocica pocetnaPlocica, PlociceMap mapa, int sirina, int visina, float brzina, float energija) {
+		this.tekstura = tekstura;
+		this.energijaPozadina = UcitajTeksturuBrzo("energijaPozadina");
+		this.energijaZeleno = UcitajTeksturuBrzo("energijaZeleno");
+		this.energijaOkvir = UcitajTeksturuBrzo("energijaOkvir");
+		this.pocetnaPlocica = pocetnaPlocica;
+		this.x = pocetnaPlocica.dohvatiX();
+		this.y = pocetnaPlocica.dohvatiY();
+		this.sirina = sirina;
+		this.visina = visina;
+		this.brzina = brzina;
+		this.energija = energija;
+		this.pocetnaEnergija = energija;
+		this.skrivenaEnergija = energija;
+		this.mapa = mapa;
+		this.prvi = true;
+		this.ziv = true;
+		this.listaTocakaProvjere = new ArrayList<MjestoProvjerePutanje>();
+		this.smjerovi = new int[2];
+		// x direction
+		this.smjerovi[0] = 0;
+		// y direction
+		this.smjerovi[1] = 0;
+		this.smjerovi = pronadjiSljedecuPutanju(pocetnaPlocica);
+		this.trenutnaTocka = 0;
+		popuniListuTocakaProvjere();
+	}
+	
+	public void osvjezi() {
+		// Provjeri je li ova klasa prvi put osvjezena, ako je ne radi nista
+		if (prvi) {
+			prvi = false;
+		} else {
+			if (dosegaoMjestoProvjere()) {
+				// Provjeri jel ima jos tocaka provjere prije nastavka
+				if (trenutnaTocka + 1 == listaTocakaProvjere.size()) {
+					dosaoDoKraja();
+				} else {
+					trenutnaTocka++;
+				}
+			} else {
+				// Ako nije na tocki provjere, nastavi dalje u trenutnom smjeru
+				// If not at a checkpoint, continue in current direction
+				x += Delta() * listaTocakaProvjere.get(trenutnaTocka).dohvatiXSmjer() * brzina;
+				y += Delta() * listaTocakaProvjere.get(trenutnaTocka).dohvatiYSmjer() * brzina;
+			}
+		}
+	}
+	
+	private void dosaoDoKraja() {
+		Igrac.promjeniZivote(-1);
+		umri();
+	}
+	
+	private boolean dosegaoMjestoProvjere() {
+		boolean dosegao = false;
+		Plocica t = listaTocakaProvjere.get(trenutnaTocka).dohvatiPlocicu();
+		if ( x > t.dohvatiX() - 3 
+				&& x < t.dohvatiX() + 3 
+				&& y > t.dohvatiY() - 3 
+				&& y < t.dohvatiY() +3) {
+			dosegao = true;
+			x = t.dohvatiX();
+			y = t.dohvatiY();
+		}
+		return dosegao;
+	}
+	
+	public void popuniListuTocakaProvjere() {
+		// Dodaj manualno prvu tocku
+		listaTocakaProvjere.add(pronadjiSljedecuTocku(pocetnaPlocica, smjerovi = pronadjiSljedecuPutanju(pocetnaPlocica)));
+		int brojac = 0;
+		boolean nastavi = true;
+		while(nastavi) {
+			int[] trenutniSmjer = pronadjiSljedecuPutanju(listaTocakaProvjere.get(brojac).dohvatiPlocicu());
+			if (trenutniSmjer[0] == 2 || brojac == 20) {
+				nastavi = false;
+			} else {
+				listaTocakaProvjere.add(pronadjiSljedecuTocku(listaTocakaProvjere.get(brojac).dohvatiPlocicu(), smjerovi = pronadjiSljedecuPutanju(listaTocakaProvjere.get(brojac).dohvatiPlocicu())));
+			}
+			brojac++;
+		}
+	}
+	
+	private MjestoProvjerePutanje pronadjiSljedecuTocku(Plocica plocica, int[] smjerovi) {
+		Plocica sljedeca = null;
+		MjestoProvjerePutanje tocka = null;
+		
+		boolean pronasao = false;
+		int brojac = 1;
+		
+		while(!pronasao) {
+			if (plocica.dohvatiPozicijuX() + smjerovi[0] * brojac == mapa.dohvatiSirinuPlocice() || plocica.dohvatiPozicijuY() + smjerovi[1] * brojac == mapa.dohvatiVisinuPlocice() ||
+					plocica.dohvatiTipPlocice() != mapa.dohvatiPlocicu(plocica.dohvatiPozicijuX() + smjerovi[0] * brojac, plocica.dohvatiPozicijuY() + smjerovi[1] * brojac).dohvatiTipPlocice()) {
+				pronasao = true;
+				brojac -= 1;
+				sljedeca = mapa.dohvatiPlocicu(plocica.dohvatiPozicijuX() + smjerovi[0] * brojac, plocica.dohvatiPozicijuY() + smjerovi[1] * brojac);
+			}
+			brojac++;
+		}
+		tocka = new MjestoProvjerePutanje(sljedeca, smjerovi[0], smjerovi[1]);
+		return tocka;
+	}
+	
+	private int[] pronadjiSljedecuPutanju(Plocica plocica) {
+		int[] smjer = new int[2];
+		Plocica gore = mapa.dohvatiPlocicu(plocica.dohvatiPozicijuX(), plocica.dohvatiPozicijuY() - 1);
+		Plocica desno = mapa.dohvatiPlocicu(plocica.dohvatiPozicijuX() + 1, plocica.dohvatiPozicijuY());
+		Plocica dolje = mapa.dohvatiPlocicu(plocica.dohvatiPozicijuX(), plocica.dohvatiPozicijuY() + 1);
+		Plocica lijevo = mapa.dohvatiPlocicu(plocica.dohvatiPozicijuX() - 1, plocica.dohvatiPozicijuY());
+		
+		// Provjeri dal se trenutno naseljeni tip plocice podudara s tipom plocice gore dolje lijevo ili desno 
+		if (plocica.dohvatiTipPlocice() == gore.dohvatiTipPlocice() && smjerovi[1] != 1) {
+			smjer[0] = 0;
+			smjer[1] = -1;
+		} else if (plocica.dohvatiTipPlocice() == desno.dohvatiTipPlocice() && smjerovi[0] != -1) {
+			smjer[0] = 1;
+			smjer[1] = 0;
+		} else if (plocica.dohvatiTipPlocice() == dolje.dohvatiTipPlocice() && smjerovi[1] != -1) {
+			smjer[0] = 0;
+			smjer[1] = 1;
+		} else if (plocica.dohvatiTipPlocice() == lijevo.dohvatiTipPlocice() && smjerovi[0] != 1) {
+			smjer[0] = -1;
+			smjer[1] = 0;
+		} else {
+			smjer[0] = 2;
+			smjer[1] = 2;
+		}
+		return smjer;
+	}
+	
+	// Primanje stete
+	public void nanesiStetu(int kolicina) {
+		energija -= kolicina;
+		if ( energija <= 0) {
+			umri();
+			Igrac.promijeniPare(5);
+		}
+	}
+	
+	private void umri() {
+		ziv = false;
+	}
+	
+	public void crtaj() {
+		float postotakEnergije = energija / pocetnaEnergija;
+		// Tekstura Neprijatelja
+		CrtajQTeksturu(tekstura, x, y, sirina, visina);
+		// Tekstura Energije
+		CrtajQTeksturu(energijaPozadina, x, y - 16, sirina, 8);
+		CrtajQTeksturu(energijaZeleno, x, y - 16, sirina * postotakEnergije, 8);
+		CrtajQTeksturu(energijaOkvir, x, y - 16, sirina, 8);
+	}
+	
+	public void smanjiSkrivenuEnergiju(float kolicina) {
+		skrivenaEnergija -= kolicina;
+	}
+	
+	public float dohvatiSkrivenuEnergiju() {
+		return skrivenaEnergija;
+	}
+
+	public int dohvatiSirinu() {
+		return sirina;
+	}
+
+	public void postaviSirinu(int width) {
+		this.sirina = width;
+	}
+
+	public int dohvatiVisinu() {
+		return visina;
+	}
+
+	public void postaviVisinu(int height) {
+		this.visina = height;
+	}
+
+	public float dohvatiEnergiju() {
+		return energija;
+	}
+
+	public void postaviEnergiju(float energija) {
+		this.energija = energija;
+	}
+
+	public float dohvatiBrzinu() {
+		return brzina;
+	}
+
+	public void postaviBrzinu(float brzina) {
+		this.brzina = brzina;
+	}
+
+	public float dohvatiX() {
+		return x;
+	}
+
+	public void postaviX(float x) {
+		this.x = x;
+	}
+
+	public float dohvatiY() {
+		return y;
+	}
+
+	public void postaviY(float y) {
+		this.y = y;
+	}
+
+	public Texture dohvatiTeksturu() {
+		return tekstura;
+	}
+
+	public void postaviTeksturu(Texture tekstura) {
+		this.tekstura = tekstura;
+	}
+	
+	public void postaviTeksturu(String imeTeksture) {
+		this.tekstura = UcitajTeksturuBrzo(imeTeksture);
+	}
+
+	public Plocica dohvatiPocetnuPlocicu() {
+		return pocetnaPlocica;
+	}
+
+	public void postaviPocetnuPlocicu(Plocica pocetnaPlocica) {
+		this.pocetnaPlocica = pocetnaPlocica;
+	}
+
+	public boolean jePrvi() {
+		return prvi;
+	}
+
+	public void postaviPrvi(boolean prvi) {
+		this.prvi = prvi;
+	}
+	
+	public PlociceMap dohvatiMapuPlocica() {
+		return mapa;
+	}
+	
+	public boolean jeZiv() {
+		return ziv;
+	}
+	
+}

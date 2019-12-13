@@ -1,0 +1,10 @@
+package com.glavni;
+
+public class NeprijateljA extends Neprijatelj {
+
+	public NeprijateljA(int plocicaX, int tileY, PlociceMap grid) {
+		super(plocicaX, tileY, grid);
+
+	}
+
+}

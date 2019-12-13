@@ -1,0 +1,61 @@
+package helpers;
+
+import data.EditorMape;
+import data.Igra;
+import data.GlavniIzbornik;
+import data.PlociceResetka;
+import static helpers.Level.LoadMap;
+
+public class StanjeSetup {
+	
+	public static enum GameState {
+		MAINMENU, GAME, EDITOR
+	}
+	
+	public static GameState gameState = GameState.MAINMENU;
+	public static GlavniIzbornik mainMenu;
+	public static Igra game;
+	public static EditorMape editor;
+	
+	public static long nextSecond = System.currentTimeMillis() + 1000;
+	public static int framesInLastSecond = 0;
+	public static int framesInCurrentSecond = 0;
+	
+	static PlociceResetka map = LoadMap("mapTest");
+	
+	public static void update() {
+		switch(gameState) {
+		case MAINMENU:
+			if (mainMenu == null) {
+				mainMenu = new GlavniIzbornik();
+			}
+			mainMenu.update();
+			break;
+		case GAME:
+			if (game == null) {
+				game = new Igra(map);
+			}
+			game.update();
+			break;
+		case EDITOR:
+			if (editor == null) {
+				editor = new EditorMape();
+			}
+			editor.update();
+			break;
+		}
+		
+		long currentTime = System.currentTimeMillis();
+		if (currentTime > nextSecond) {
+			nextSecond += 1000;
+			framesInLastSecond = framesInCurrentSecond;
+			framesInCurrentSecond= 0;
+		}
+		framesInCurrentSecond++;
+	}
+	
+	public static void setState(GameState newState) {
+		gameState = newState;
+	}
+
+}

@@ -1,0 +1,27 @@
+1564672328994	Rename resource 'editButton.png'
+1564672431041	Delete element
+1564677286513	Rename method 'Draw'
+1564677487327	Rename method 'draw'
+1564690520047	Rename method 'Die'
+1564695060645	Rename method 'CheckpointReached'
+1564695077612	Rename method 'PopulateCheckpointList'
+1564695094565	Rename method 'FindNextC'
+1564695117652	Rename method 'FindNextD'
+1564695643864	Rename method 'Draw'
+1564695814165	Rename method 'Draw'
+1564695827152	Rename method 'GetTile'
+1564695836420	Rename method 'SetTile'
+1564696018577	Rename method 'Update'
+1564696029837	Rename method 'Spawn'
+1564751939483	Rename resource 'bulletFireSmal.png'
+1564752266748	Delete element
+1564753650510	Delete element
+1564753840611	Rename resource 'bullet.png'
+1564757011285	Delete element
+1564782786899	Rename enum constant 'CannonRed'
+1564782807307	Rename enum constant 'CannonBlue'
+1564784224901	Rename type 'TowerCannonBlue'
+1564797462657	Rename type 'TowerIce'
+1564880542668	Delete element
+1564934567417	Delete element
+1564938836713	Rename compilation unit 'TowerCannonRed.java'

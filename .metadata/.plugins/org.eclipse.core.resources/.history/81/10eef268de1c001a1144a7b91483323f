@@ -1,0 +1,18 @@
+package data;
+
+public enum TipPlocica {
+	
+	Grass("plocicaPijesak", true),
+	Dirt("plocicaZemlja", false),
+	Water("plocicaVoda", false),
+	NULL("plocicaVoda", false);
+	
+	String imeTeksture;
+	boolean mozeGraditiToranj;
+	
+	TipPlocica(String imeTexture, boolean mozeGraditToranj) {
+		this.imeTeksture = imeTexture;
+		this.mozeGraditiToranj = mozeGraditToranj;
+	}
+
+}

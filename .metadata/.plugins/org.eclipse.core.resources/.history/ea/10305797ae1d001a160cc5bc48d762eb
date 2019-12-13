@@ -1,0 +1,17 @@
+package com.glavni;
+
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public class TopGunNarancasti extends Top {
+	
+	public TopGunNarancasti(TipTopa tip, Plocica pocetnaPlocica, CopyOnWriteArrayList<Neprijatelj> enemies) {
+		super(tip, pocetnaPlocica, enemies);
+	}
+	
+	@Override
+	public void pucaj(Neprijatelj target) {
+		super.projektili.add(new ProjektilVatra(super.tipTopa.tipProjektila, super.meta, super.dohvatiX(), super.dohvatiY(), 32, 32));
+		super.meta.smanjiTrenutnuEnergiju(super.tipTopa.tipProjektila.snagaProjektila);
+	}
+
+}

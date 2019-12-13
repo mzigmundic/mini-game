@@ -1,0 +1,92 @@
+package com.sporedni;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+
+import com.glavni.Plocica;
+import com.glavni.PlociceMap;
+import com.glavni.TipPlocice;
+
+public class Level {
+	
+	public static void SnimiMapu(String imeMape, PlociceMap mapa) {
+		String podaciMape = "";
+		for (int i = 0; i < mapa.dohvatiSirinuPlocice(); i++) {
+			for (int j = 0; j < mapa.dohvatiVisinuPlocice(); j++) {
+				podaciMape += getTileID(mapa.dohvatiPlocicu(i, j));
+			}
+		}
+		try {
+			File datoteka = new File(imeMape);
+			BufferedWriter bw = new BufferedWriter(new FileWriter(datoteka));
+			bw.write(podaciMape);
+			bw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static PlociceMap UcitajMapu(String imeMape) {
+		PlociceMap mapa = new PlociceMap();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(imeMape));
+			String data = br.readLine();
+			for (int i = 0; i < mapa.dohvatiSirinuPlocice(); i++) {
+				for (int j = 0; j < mapa.dohvatiVisinuPlocice(); j++) {
+					mapa.postaviPlocicu(i, j, getTileType(data.substring(i * mapa.dohvatiVisinuPlocice() + j, i * mapa.dohvatiVisinuPlocice() + j + 1)));
+				}
+			}
+			br.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return mapa;
+	}
+	
+	public static TipPlocice getTileType(String ID) {
+		TipPlocice type = TipPlocice.NULL;
+		switch (ID) {
+		case "0":
+			type = TipPlocice.Pijesak;
+			break;
+		case "1":
+			type = TipPlocice.Zemlja;
+			break;
+		case "2":
+			type = TipPlocice.Voda;
+			break;
+		case "3":
+			type = TipPlocice.NULL;
+			break;
+		}
+		return type;
+	}
+	
+	public static String getTileID(Plocica t) {
+		String ID = "E";
+		switch (t.dohvatiTipPlocice()) {
+		case Pijesak:
+			ID = "0";
+			break;
+		case Zemlja:
+			ID = "1";
+			break;
+		case Voda:
+			ID = "2";
+			break;
+		case NULL:
+			ID = "3";
+			break;
+		}	
+		return ID;
+	}
+	
+	
+	
+	
+}

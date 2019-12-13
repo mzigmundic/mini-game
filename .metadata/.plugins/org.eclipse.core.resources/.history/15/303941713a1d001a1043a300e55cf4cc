@@ -1,0 +1,61 @@
+package helpers;
+
+import data.EditorMape;
+import data.Igra;
+import data.GlavniIzbornik;
+import data.PlociceMap;
+import static helpers.Level.UcitajMapu;
+
+public class MenadzerStanja {
+	
+	public static enum StanjeIgre {
+		GLAVNI_IZBORNIK, IGRA, EDITOR_MAPE
+	}
+	
+	public static StanjeIgre stanje = StanjeIgre.GLAVNI_IZBORNIK;
+	public static GlavniIzbornik glavniIzbornik;
+	public static Igra igra;
+	public static EditorMape editor;
+	
+	public static long sekundaPlusJedan = System.currentTimeMillis() + 1000;
+	public static int frejmovaUProslojSekundi = 0;
+	public static int frejmovaUTrenutnojSekundi = 0;
+	
+	static PlociceMap map = UcitajMapu("mapTest");
+	
+	public static void osvjezi() {
+		switch(stanje) {
+		case GLAVNI_IZBORNIK:
+			if (glavniIzbornik == null) {
+				glavniIzbornik = new GlavniIzbornik();
+			}
+			glavniIzbornik.osvjezi();
+			break;
+		case IGRA:
+			if (igra == null) {
+				igra = new Igra(map);
+			}
+			igra.osvjezi();
+			break;
+		case EDITOR_MAPE:
+			if (editor == null) {
+				editor = new EditorMape();
+			}
+			editor.osvjezi();
+			break;
+		}
+		
+		long trenutnoVrijeme = System.currentTimeMillis();
+		if (trenutnoVrijeme > sekundaPlusJedan) {
+			sekundaPlusJedan += 1000;
+			frejmovaUProslojSekundi = frejmovaUTrenutnojSekundi;
+			frejmovaUTrenutnojSekundi= 0;
+		}
+		frejmovaUTrenutnojSekundi++;
+	}
+	
+	public static void postaviStanje(StanjeIgre novoStanje) {
+		stanje = novoStanje;
+	}
+
+}
